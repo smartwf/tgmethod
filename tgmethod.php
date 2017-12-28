@@ -38,17 +38,21 @@ class tgmethod
     /**
      * Make Http Request
      * @param string $method  Mothod for calling
-     * @param array $datas  Datas for Send to Telegram
+     * @param object $datas  Datas for Send to Telegram
      * @return object
      */
-    private function make_http_request($method,$datas=[]){
+    private function make_http_request($method,$datas=null){
         $url = "https://api.telegram.org/bot".$this->token."/".$method;
         curl_setopt($this->ch,CURLOPT_RETURNTRANSFER,true);
         curl_setopt($this->ch,CURLOPT_POSTFIELDS,($datas));
         curl_setopt($this->ch,CURLOPT_URL,$url);
         $res = curl_exec($this->ch);
         if(curl_error($this->ch)){
-            return false;
+            $r=new \stdClass();
+            $r->ok=false;
+            $r->description=curl_error($this->ch);
+            $r->errno=curl_errno($this->ch);
+            return $r;
         }else{
             $res=json_decode($res);
             if ($res->ok){
