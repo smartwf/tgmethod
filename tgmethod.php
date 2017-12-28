@@ -48,7 +48,7 @@ class tgmethod
         curl_setopt($this->ch,CURLOPT_URL,$url);
         $res = curl_exec($this->ch);
         if(curl_error($this->ch)){
-            var_dump(curl_error($this->ch));
+            return false;
         }else{
             $res=json_decode($res);
             if ($res->ok){
@@ -69,11 +69,45 @@ class tgmethod
 
 
 
-                /******************************************
-                *                             *
-                *       Method functions      *
-                *                             *
+    /******************************************
+     *                             *
+     *       Method functions      *
+     *                             *
      ******************************************/
+
+
+    /**
+     * Use this method to specify a url and receive incoming updates via an outgoing webhook
+     * @param string $url HTTPS url to send updates to. Use an empty string to remove webhook integration
+     * @param array $allowed_updates List the types of updates you want your bot to receive. For example, specify [“message”, “edited_channel_post”, “callback_query”] to only receive updates of these types
+     * @param int $max_connections Maximum allowed number of simultaneous HTTPS connections to the webhook for update delivery, 1-100
+     * @param file $certificate Upload your public key certificate so that the root certificate in use can be checked
+     * @return object
+     */
+    public function setWebhook($url,$allowed_updates=null,$max_connections=null,$certificate=null){
+        return $this->make_http_request(__FUNCTION__,(object) get_defined_vars());
+    }
+
+
+
+    /**
+     * Use this method to remove webhook integration if you decide to switch back to getUpdates
+     * @return object
+     */
+    public function deleteWebhook(){
+        return $this->make_http_request(__FUNCTION__);
+    }
+
+
+
+    /**
+     * Use this method to get current webhook status. Requires no parameters
+     * @return object
+     */
+    public function getWebhookInfo(){
+        return $this->make_http_request(__FUNCTION__);
+    }
+
 
 
     /**
@@ -97,7 +131,7 @@ class tgmethod
      * @param bool $disable_notification Sends the message silently. Users will receive a notification with no sound.
      * @return object
      */
-    public function sendMessage($chat_id,$text,$reply_to_message_id=null,$reply_markup=null,$parse_mode=null,$disable_web_page_preview=null,$disable_notification=null){
+    public function sendMessage($chat_id,$text,$reply_to_message_id=null,$parse_mode=null,$disable_web_page_preview=null,$reply_markup=null,$disable_notification=null){
         return $this->make_http_request(__FUNCTION__,(object) get_defined_vars());
     }
 
@@ -269,7 +303,7 @@ class tgmethod
 
 
     /**
-     * Use this method to edit live location messages sent by the bot or via the bot (for inline bots). A location can be edited until its live_period expires or editing is explicitly disabled by a call to stopMessageLiveLocation
+     * Use this method to stop updating a live location message sent by the bot or via the bot (for inline bots) before live_period expires.
      * @param int|string $chat_id Required if inline_message_id is not specified. Unique identifier for the target chat or username of the target channel (in the format @channelusername)
      * @param int $message_id Required if inline_message_id is not specified. Identifier of the sent message
      * @param string $inline_message_id Required if chat_id and message_id are not specified. Identifier of the inline message
@@ -280,9 +314,9 @@ class tgmethod
     {
         return $this->make_http_request(__FUNCTION__,(object) get_defined_vars());
     }
-    
-    
-    
+
+
+
     /**
      * Use this method to send information about a venue.
      * @param int|string $chat_id  Unique identifier for the target chat or username of the target channel (in the format @channelusername)
@@ -300,9 +334,9 @@ class tgmethod
     {
         return $this->make_http_request(__FUNCTION__,(object) get_defined_vars());
     }
-    
-    
-    
+
+
+
     /**
      * Use this method to send phone contacts
      * @param int|string $chat_id  Unique identifier for the target chat or username of the target channel (in the format @channelusername)
@@ -361,7 +395,7 @@ class tgmethod
 
     /**
      * Use this method to get File link
-     * @param string $file_path The file path received from the getFile function
+     * @param string|object $file_path The file path received from the getFile function
      * @return string
      */
     public function getFileLink($file_path)
@@ -645,9 +679,9 @@ class tgmethod
     {
         return $this->make_http_request(__FUNCTION__,(object) get_defined_vars());
     }
-    
-    
-    
+
+
+
     /**
      * Use this method to edit text and game messages sent by the bot or via the bot (for inline bots)
      * @param int|string $chat_id  Unique identifier for the target chat or username of the target channel (in the format @channelusername)
@@ -686,11 +720,11 @@ class tgmethod
      * Use this method to edit only the reply markup of messages sent by the bot or via the bot (for inline bots)
      * @param int|string $chat_id  Unique identifier for the target chat or username of the target channel (in the format @channelusername)
      * @param int $message_id Required if inline_message_id is not specified. Identifier of the sent message
-     * @param string $inline_message_id Required if chat_id and message_id are not specified. Identifier of the inline message
      * @param json $reply_markup Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to remove reply keyboard or to force a reply from the user.
+     * @param string $inline_message_id Required if chat_id and message_id are not specified. Identifier of the inline message
      * @return object
      */
-    public function editMessageReplyMarkup($chat_id,$message_id,$inline_message_id=null,$reply_markup=null)
+    public function editMessageReplyMarkup($chat_id,$message_id,$reply_markup,$inline_message_id=null)
     {
         return $this->make_http_request(__FUNCTION__,(object) get_defined_vars());
     }
